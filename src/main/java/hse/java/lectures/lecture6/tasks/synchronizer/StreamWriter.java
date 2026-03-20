@@ -1,8 +1,8 @@
 package hse.java.lectures.lecture6.tasks.synchronizer;
 
-import lombok.Getter;
-
 import java.io.PrintStream;
+
+import lombok.Getter;
 
 public class StreamWriter implements Runnable {
 
@@ -26,11 +26,20 @@ public class StreamWriter implements Runnable {
 
     @Override
     public void run() {
-        // Writer threads are intentionally infinite for the task contract.
         while (true) {
-            output.print(message);
-            onTick.run();
+            try {
+                if (!monitor.waitMyTurn(id)) {
+                    break; 
+                }
+                
+                output.print(message);
+                onTick.run();
+                
+                monitor.finishMyTurn();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
     }
-
 }
