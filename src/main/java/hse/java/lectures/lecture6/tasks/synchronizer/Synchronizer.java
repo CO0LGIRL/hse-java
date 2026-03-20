@@ -1,6 +1,5 @@
 package hse.java.lectures.lecture6.tasks.synchronizer;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class Synchronizer {
@@ -19,8 +18,10 @@ public class Synchronizer {
     }
 
     public void execute() {
-        tasks.sort(Comparator.comparingInt(StreamWriter::getId));
-        int[] orderedIds = tasks.stream().mapToInt(StreamWriter::getId).toArray();
+        int[] orderedIds = tasks.stream()
+                .mapToInt(StreamWriter::getId)
+                .sorted()
+                .toArray();
 
         StreamingMonitor monitor = new StreamingMonitor(orderedIds, ticksPerWriter);
 
